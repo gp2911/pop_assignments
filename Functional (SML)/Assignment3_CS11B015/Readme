@@ -1,0 +1,16 @@
+Open the SML interpreter and type in
+						
+						use "Path/To/Polynomial.sml";
+
+to import the functions used in this file.
+
+Functions to be used:   addPoly(string, string) => string for addition
+						subPoly(string, string) => string for subtraction
+						mulPoly(string, string) => string for multiplication
+						divPoly(string, string) => string for division
+						powPoly(string, int)    => string for power
+						integratePoly(string)   => string for integration
+						factorizePoly(string)   => string for factorization
+
+Extent of Factorization:
+	The algorithm used is capable of handling factorizations of polynomials with integral coefficients. It is capable of completely factorising polynomials with at most one irreducible quadrartic factor
