@@ -1,0 +1,11 @@
+Enter your input grid in grid.
+
+DO NOT MODIFY solutionGrid
+
+Run the "run.sh"file using the following command:
+	"$>sh run.sh"
+
+Open and view 'solution' for the sequence of steps to follow to convert problem grid to a fully solved valid sudoku grid (if that's possible).
+
+
+

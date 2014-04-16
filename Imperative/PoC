@@ -1,0 +1,224 @@
+1. Introduction to functions:
+
+ The program uses the following ten user-defined functions:
+	  1.int isInconsistant(int **grid, int subgridNum );
+	  2.int* searchSwappable( int **grid, int squareNum, int** subgridStats, int symbol);
+	  3.int** updateSubgridStats( int **grid, int** subgridStats);
+	  4. void basic_rotateRowLeft( int **grid, int row );
+	  5. void basic_rotateRowRight( int **grid, int row );
+	  6. void basic_rotateColumnUp( int **grid, int col );
+	  7. void basic_rotateColumnDown( int **grid, int col );
+	  8. void basic_specialSquarePerm( int **grid, int square, int perm[3][3] );
+	  9. void derived_swapAdjLeft(int **grid, int pos[2] );
+	 10. void derived_swapAdjRight( int **grid, int pos[2]);
+	 11. void derived_swapAdjUp( int **grid, int pos[2]);
+	 12. void derived_swapAdjDown( int **grid, int pos[2]);
+	 13. void derived_freeSwap( int **grid, int pos1[2], int pos2[2]);
+
+
+   1.1 isInconsistent()
+	Input args: int **grid, int subgridNum
+	Return type: int
+
+	Assertion:This function returns '1'if there is any symbol that is not present in the subgrid pointed to by squareNum. If no such symbol exists, it returns 0. It makes NO modifications to grid.
+	     The assertion is justifiable by just analysing the code for the function. The function uses 9-membered array to keep track of the number of each symbol present in the squareNum. The bounds on loop variables p and q ensure that only the subgrid corresponding to squareNumber is scanned. Finally, if any entry in this array check[] is '0', the funtion return '1'. If no such symbol exists, control flows to the next line, and the function returns 0.
+________________________________________________________________
+
+   1.2 updateSubgridStats()
+	Input args: int **grid, int **subgridStats
+	Return type: int**
+	Significance and Interpretaton of global variable subgridStats:
+		subgridStats is a 9x9 2-D array that maintains statistics about the subgrids of grid. It is interpreted as follows:
+	   subgridStats[i][j]=0 There is exactly one occurance of symbol 'j+1'n subgrid 'i'.
+	   subgridStats[i][j]>0 There are excess occurances of symbol 'j+1' in subgrid 'i'.
+	   subgridStats[i][j]<0 Symbol 'j+1'does not occur in subgrid 'i'.
+	Assertion: This function returns the subgridStats after updating it.
+	     The assertion can be justified by looking at the code. The outer for loop, on 'k' iterates over the subgrids. The nested i&j-loops, put together as one unit, count the number of occurances of each symbol in subgrid 'k' and store it in a 9-membered array count. The final i-loop sets subgridStats[k][i]=count[i]-1;
+________________________________________________________________
+  
+   1.3 searchSwappable()
+	Input args: int **grid, int squareNum, int **subgridStats, int symbol
+	Return type: int*
+	Assertion:This function returns the position of symbol 'j'in the grid such that it is not in squareNum and the corresponding sub-grid has an excess of symbol 'j'.
+	     The assertion follows from the code. The function is actually a single for loop that iterates over the entries in 'grid'. The loop variable 'i' is the subgrid which is currntly being checked. The bounds of i ensure that the subgrid given by squareNum is not searched. Also, only those squares are searched whose subgridStats value for the requires symbol is positive. By definition of subgridStats, we know that if subgridStats[i][j] > 0, then the subgrid i has an excess of symbol j.
+	    Finally when such a location is found, a 2-membered array retPos is set up with retPos[0] = required row number and retPos[1] = required column number. The function then returns retPos.
+	    If no such location is found, the function returns NULL.	     
+________________________________________________________________
+
+   1.4 basic_rotateRowLeft()
+	Input args: int **grid, int row
+	Return type: void
+	
+	Assertion:This function rotates 'row' by one unit to the left.
+	     The assertion is justified by the code. The for loop assigns every symbol, except grid[row][8] in grid[row] to the symbol to the right of it. Symbol at grid[row][8] is made to previous value of grid[row][0] to finish the rotation.
+
+	     The last line, a call to updateSubgridStats() updates the global variable subgridStats to reflect this change.
+________________________________________________________________
+
+   1.5 basic_rotateRowRight()
+	Input args: int **grid, int row
+	Return type: void
+
+	Assertion:This function rotates 'row' by one unit to the right.
+             The assertion is justified by the code. The for loop assigns every symbol, except grid[row][0] in grid[row] to the symbol to the left of it. Symbol at grid[row][0] is made to previous value of grid[row][8] to finish the rotation.
+
+             The last line, a call to updateSubgridStats() updates the global variable subgridStats to reflect this change.   
+________________________________________________________________
+
+   1.6 basic_rotateColumnUp()
+	Input args: int **grid, int col
+        Return type: void
+     
+        Assertion:This function rotates 'col' by one unit upwards.
+             The assertion is justified by the code. The for loop assigns every symbol, except grid[8][col] in grid[][col] to the symbol to the below it. Symbol at grid[8][col] is made to previous value of grid[0][col] to finish the rotation.
+
+             The last line, a call to updateSubgridStats() updates the global variable subgridStats to reflect this change.
+________________________________________________________________
+
+   1.7 basic_rotateColumnDown()
+	Input args: int **grid, int col
+        Return type: void
+        
+	Assertion:This function rotates 'col' by one unit downwards.
+             The assertion is justified by the code. The for loop assigns every symbol, except grid[0][col] in grid[][col] to the symbol to the above it. Symbol at grid[0][col] is made to previous value of grid[8][col] to finish the rotation.
+
+             The last line, a call to updateSubgridStats() updates the global variable subgridStats to reflect this change.
+________________________________________________________________
+
+   1.8 basic_specialSquarePerm()
+	Input args: int **grid, int square, int perm[3][3]
+	Return type: void
+	
+	Assertion: This function checks if the 3x3 matrix perm is a valid permutation of subgrid 'square' of 'grid'. If yes, it replaces subgrid 'square' with perm. ( Note that, in essence, this can be treated as a permutating the subgrid 'square'.) 
+	     The assertion can be seen to be true from the code. Lines 259-262 count number of each occurances of each symbol in the original subgrid and store it in currCount. Lines 263-265 store number of occurances of each symbol in 'perm' and store it in newCount.Lines 267-271 compare currCount and newCount. If any entry differs, the function returns printing an error statement. Else, the subid is replaced with 'perm', as realised by lines 273-276.
+	     subgridStats is updated by the call to updateSubgridStats().
+
+    and store it in newCount.Lines 267-271 compare currCount and newCount. If any entry differs, the function returns printing an error statement. Else, the subid is replaced with 'perm', as realised by lines 273-276.
+	     subgridStats is updated by the call to updateSubgridStats().
+________________________________________________________________
+
+   1.9 derived_swapAdjLeft()
+	Input args: int **grid, int pos[2] 
+	Return type: void
+   	Interpretation of pos: pos[0]= row index;
+			       pos[1]= column index;
+
+	Assertion: This function "swaps" the symbol pointed to by 'pos' with the symbol adjacent to it and to the left of it.
+
+	   To justify this assertion, I am going to consider two kinds of input args:
+
+	      case 1: when the location pointed to by pos is to th e immediate right of a subgrid boundary
+			Mathematically, this case can be expressed by the condition "pos[1]%3==0". Lines 290-303 correspond to the handling of this case. Now, consider the row pos[0]. This can be expressed as: 
+	    a0 ..... ap aq|ar....a8 a9 , where the '|' represents 					   a subgrid boundary, and 
+					 ar is pointed to by pos
+
+Line 290 rotates this row one unit to the right using basic_rotateRight() function. So, this row becomes:
+
+	    a9 a0 ..... ap|aq ar....a8
+
+Now, note that both aq and ar are inside the same subgrid and can be swapped freely. (Swapping of symbols within the same subgrid can be seen as a permutation of the subgrid.). So, lines 293-300 set up a 3x3 grid 'newGrid'which is the required permutation. This is passed as argument to basic_specialSquarePerm(). So, the row becomes:
+	    a9 a0 ..... ap|ar aq....a8
+
+Line 303 rotates the row by one unit to the left using basic_rotateRowLeft() function. This row now becomes:
+
+	    a0 ..... ap ar|aq....a8 a9
+
+Notice that this is the same as the initial case, with the variables ar and aq interchanged. Also, since no column rotations were done, we can say that no other row was affected in the process.
+
+		case 2: when location pointed to by pos is NOT to the immediate right of a subgrid boundary
+			   Mathematically, this case is represented by the condition "pos[1] != 0". Lines 307-319 takes care of this case. Note that this case translates directly to swapping of two symbols within the same subgrid and can, as such, be handled by making a single call to basic_specialSquarePerm() which is done in line 319.
+
+Note that the two cases are mutually exclusive and exhaustive.
+
+________________________________________________________________
+ 
+   1.10 derived_swapAdjRight():
+	Input args: int **grid, int pos[2]
+	Return type: void
+	Interpretation of pos: As in derived_swapAdjLeft()
+
+	Assertion: This function swaps the symbol pointed to by pos with the symbol immediately to its right.		
+	     This is immediately visible from the code as the functionality is achieved by calling derived_swapAdjLeft(), giving the new position as the argument.
+________________________________________________________________
+
+   1.11 derived_swapAdjUp():
+	Input args: int **grid, int pos[2]
+	Return type: void
+	Interpretation of pos: As in derived_swapAdjLeft()
+
+	Assertion: This function swaps the symbol pointed to by pos with the symbol immediately upwards of it.
+	The proof for this assertion is similar to the proof for derived_swapAdjLeft(). Replace row transitions by suitable column translations.
+________________________________________________________________
+
+   1.12 derived_swapAdjDown():
+	Input args: int **grid, int pos[2]
+	Return type: void
+	Interpretation of pos: As in derived_swapAdjLeft()	
+
+	Assertion:This function swaps the symbol in location pointed to by pos with the symbol immediately below it.
+		Proof of this assertion is immediately visible from the code as the functionality is achieved by making a call to the derived_swapAdjUp() function with the new position as argument.		
+________________________________________________________________
+
+   1.13 derived_freeSwap()
+	Input args: int **grid,int pos1[2], int pos2[2]
+	Return type: void
+	Interpretation of pos1 and pos2: As in derived_swapAdjLeft()
+
+	Assertion:This function swaps the symbol at location pointed to by pos1 with the symbol pointed to by pos2 WITHOUT affecting the grid in any other way.
+		The proof of this assertion is given by careful inspection of the code.Lines 418-429 assign valus for currPos[2] and newPos[2]. Note that they are chosen so that currPos never lies to the left of newPos (condition of the 'if'at Line 418). Lines 430-435 assign values for hor and vert, the horizontal and vertical displacements respectively.The variable flag is set when newPos lies above currPos.
+		The for loop at line 436 is important. Consider the row currPos[0].
+
+	a1 a2 ... ap aq ...a8,where ap is to be swapped with ax.
+	......................
+	...............ax.....
+
+		This for loop swaps ap with its adjacent right element repeatedly 'hor' times, updating currPos as it does. Note that
+hor = newPos[1]-currPos[1], so that at the end of this for loop, currPos[1]= currPos[1]_old + hor = currPos[1]_old + newPos[1] - currPos[1] = newPos[1]. That is, at the end of this for loop ap and ax are in the same column. Now there arise 2 cases, depending on whether the flag has been set or not.
+
+	Case 1: flag = 0 => newPos is below currPos
+		Lines 441-451 handle this case. There are two for loops involved. The first loop ( at Line 441 ) pushes ap down and swaps it with ax. But note that ax is now at the location immediately above newPos. It still needs to be brought back to pos1. The second loop takes care of this.
+
+Functionality of first for loop:
+
+	a1 ... ap ... a8          a1 ... bx ... a8
+	.......bx.......	  ................
+	................	  ................
+	................  ====>   .......dx.......
+	.......dx.......	  .......ax.......
+	.......ax.......	  .......ap.......
+	................	  ................
+
+Functionality of second for loop:
+	
+	a1 ... bx ... a8	  a1 ... ax ... a8
+	.......cx.......	  .......bx.......
+	................	  .......cx.......
+	.......ax.......  ====>   ................
+	.......ap.......	  .......ap.......
+	................	  ................
+	................	  ................
+
+
+	Combined together, the two for loops essentially swap a value at currPos with a possibly non-adjacent value in the same column as currPos[1].
+
+	Case 2: flag = 1 => newPos is above currPos
+		This case is handled by lines 454-464 in a fashion similar to the handling of case 1, using multiple calls to the vertical swap functions. The proof too thus will follow in a similar way.
+
+	The last for loop at line 467 swaps in essence swaps the value at currPos repeatedly with its left adjacent element and brings it to the location pointed to by pos1.
+
+	And, of course, subgridStats is updated by making a call to the function updateSubgridStats().
+________________________________________________________________
+________________________________________________________________
+
+2. Explanation of flow of control:
+	The execution begins, as expected with the main() function.Lines 34-60 deal with setting up and initializing the variables used. The grid is read from the input file and subgridStats set in lines 62-77. Lines 79-90 initialise count. Lines 92-108 check for the necessary conditions:
+	1) Exactly 9 symbols must be used- no more, no less.
+	2) There must be exactly 9 occurances of each symbol.
+
+Failure of any one of these checks makes the grid inconsistent beyond doubt.Also adherence to both these conditions ensures that the grid is consistent. These two conditions, taken together, are the necessary and sufficient conditions to prove that the given set of 81 numbers is consistent.
+
+The for loop from 127-172 forms the core of the program. It iterates over he subgrids, fixing each subgrid one by one. 
+Consistency of a subgrid: A subgrid is said to be consistent if ti contains all the 9 symbols, each occuring exactly once.
+
+Once the subgrids are fixed, the gird is converted to a solved sudoku trivially by permutating the subgrids.
+
